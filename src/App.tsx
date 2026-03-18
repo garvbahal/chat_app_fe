@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import ChatPage from "./components/ChatPage";
 import type { ChatMessage } from "./components/MessageBubble";
 import JoinRoom from "./components/JoinRoom";
+import axios from "axios";
 
 function App() {
     const [username, setUsername] = useState("");
@@ -10,8 +11,16 @@ function App() {
     const [isInRoom, setIsInRoom] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [ws, setWs] = useState<WebSocket>();
+
+    async function fetchMessages(value: string) {
+        const response = await axios.get(
+            `http://localhost:3000/api/v1/messages/${value}`,
+        );
+        console.log(response);
+        setMessages(response.data.messages);
+    }
     useEffect(() => {
-        const webSocket = new WebSocket("ws://localhost:8080");
+        const webSocket = new WebSocket("ws://localhost:3000");
         setWs(webSocket);
 
         webSocket.onopen = () => {
@@ -26,8 +35,8 @@ function App() {
                     {
                         id: 123, //see thiss
                         username: messageData.payload.username,
-                        text: messageData.payload.message,
-                        timestamp: messageData.payload.createdAt,
+                        message: messageData.payload.message,
+                        createdAt: messageData.payload.createdAt,
                     },
                 ]);
             }
@@ -65,7 +74,7 @@ function App() {
                 username: username,
             },
         };
-        if (ws && ws.readyState === ws.OPEN) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify(obj));
         }
         setMessages([]);
@@ -83,15 +92,15 @@ function App() {
                 username: username,
             },
         };
-        if (ws && ws.readyState === ws.OPEN) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify(obj));
         }
-        // setMessages(initialMessages);
+        fetchMessages(normalizedRoomCode);
         setIsInRoom(true);
     };
 
     const handleLeaveRoom = () => {
-        if (ws && ws.readyState === ws.OPEN) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
             const obj = {
                 type: "leave",
                 payload: {
@@ -101,6 +110,7 @@ function App() {
             };
             ws.send(JSON.stringify(obj));
         }
+        setMessages([]);
         setIsInRoom(false);
         setRoomCode("");
     };

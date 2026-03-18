@@ -1,8 +1,8 @@
 export type ChatMessage = {
     id: number;
     username: string;
-    text: string;
-    timestamp: string;
+    message: string;
+    createdAt: string;
 };
 
 type MessageBubbleProps = {
@@ -35,10 +35,10 @@ function MessageBubble({ message, currentUser }: MessageBubbleProps) {
                                 : "text-slate-400"
                         }`}
                     >
-                        {message.timestamp}
+                        {message.createdAt}
                     </span>
                 </div>
-                <p className="text-sm leading-relaxed">{message.text}</p>
+                <p className="text-sm leading-relaxed">{message.message}</p>
             </article>
         </div>
     );
