@@ -3,6 +3,7 @@ import ChatPage from "./components/ChatPage";
 import type { ChatMessage } from "./components/MessageBubble";
 import JoinRoom from "./components/JoinRoom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 function App() {
     const [username, setUsername] = useState("");
@@ -13,11 +14,15 @@ function App() {
     const [ws, setWs] = useState<WebSocket>();
 
     async function fetchMessages(value: string) {
-        const response = await axios.get(
-            `http://localhost:3000/api/v1/messages/${value}`,
-        );
-        console.log(response);
-        setMessages(response.data.messages);
+        try {
+            const response = await axios.get(
+                `http://localhost:3000/api/v1/messages/${value}`,
+            );
+
+            setMessages(response.data.messages);
+        } catch (error) {
+            throw error;
+        }
     }
     useEffect(() => {
         const webSocket = new WebSocket("ws://localhost:3000");
@@ -81,22 +86,28 @@ function App() {
         setIsInRoom(true);
     };
 
-    const handleJoinRoom = () => {
+    const handleJoinRoom = async () => {
         ensureUsername();
         const normalizedRoomCode = roomCode.trim() || "123";
-        setActiveRoomCode(normalizedRoomCode);
-        const obj = {
-            type: "join",
-            payload: {
-                roomId: normalizedRoomCode,
-                username: username,
-            },
-        };
-        if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify(obj));
+        const toastId = toast.loading("Joining the room...");
+        try {
+            setActiveRoomCode(normalizedRoomCode);
+            const obj = {
+                type: "join",
+                payload: {
+                    roomId: normalizedRoomCode,
+                    username: username,
+                },
+            };
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify(obj));
+            }
+            await fetchMessages(normalizedRoomCode);
+            toast.success("Joined successfully", { id: toastId });
+            setIsInRoom(true);
+        } catch (error) {
+            toast.error("Failed to join room", { id: toastId });
         }
-        fetchMessages(normalizedRoomCode);
-        setIsInRoom(true);
     };
 
     const handleLeaveRoom = () => {
@@ -123,7 +134,7 @@ function App() {
                 message: value,
             },
         };
-        if (ws && ws.readyState === ws.OPEN) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify(obj));
         }
     };
