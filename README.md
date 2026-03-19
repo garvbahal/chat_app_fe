@@ -1,73 +1,115 @@
-# React + TypeScript + Vite
+# Pulse Chat Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Modern realtime chat frontend built with React, TypeScript, Vite, and Tailwind CSS.
 
-Currently, two official plugins are available:
+## Live Deployment
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Frontend: https://pulse-chat.live
+- Backend API: https://api.pulse-chat.live
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Create room and join room flow
+- Realtime chat updates via WebSocket
+- Room message history loading
+- Responsive dark UI
+- Toast notifications for room actions
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS
+- Axios
+- react-hot-toast
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Project Structure
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+src/
+	App.tsx
+	main.tsx
+	index.css
+	components/
+		JoinRoom.tsx
+		ChatPage.tsx
+		MessageBubble.tsx
+		MessageInput.tsx
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Prerequisites
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Node.js 18+
+- npm
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Environment Variables
+
+Create a `.env` file in the frontend root.
+
+### Local Development
+
+```env
+VITE_BACKEND_URL=http://localhost:4000/api/v1
 ```
+
+### Production
+
+```env
+VITE_BACKEND_URL=https://api.pulse-chat.live/api/v1
+```
+
+## Install Dependencies
+
+```bash
+npm install
+```
+
+## Available Scripts
+
+- `npm run dev` - Start Vite dev server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+
+## Run Locally
+
+```bash
+npm run dev
+```
+
+Open:
+
+- http://localhost:5173
+
+## Application Flow
+
+1. Enter username.
+2. Create a room (auto-generated code) or join with an existing room code.
+3. Client sends a `join` event over WebSocket.
+4. Existing room messages are fetched from backend.
+5. New messages are sent via WebSocket and rendered in realtime.
+
+## Backend Endpoints Used by Frontend
+
+- `GET /api/v1/messages/:roomId`
+- WebSocket events: `join`, `chat`, `leave`
+
+## Deployment Notes
+
+- Frontend production URL: https://pulse-chat.live
+- Backend production URL: https://api.pulse-chat.live
+- Ensure backend CORS `FRONTEND_URL` matches frontend domain.
+
+## Troubleshooting
+
+- If chat history does not load, verify `VITE_BACKEND_URL` and backend health endpoint.
+- If realtime messaging fails, check browser console for WebSocket connection errors.
+- If CORS errors appear, confirm backend `FRONTEND_URL` includes the exact frontend URL.
+
+## Future Improvements
+
+- Add separate env vars for API and WebSocket URLs
+- Improve timestamp formatting in message bubbles
+- Add reconnect strategy for WebSocket disconnections
+- Add typing indicators and unread message badges
