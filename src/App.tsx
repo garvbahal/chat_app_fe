@@ -15,7 +15,6 @@ function App() {
 
     async function fetchMessages(value: string) {
         try {
-          
             const response = await axios.get(
                 `${import.meta.env.VITE_BACKEND_URL}/messages/${value}`,
             );
@@ -64,9 +63,17 @@ function App() {
         return normalized;
     };
 
+    function generateRoomCode(length = 6) {
+        let code = "";
+        while (code.length < length) {
+            code += Math.random().toString(36).slice(2).toUpperCase();
+        }
+        return code.slice(0, length);
+    }
+
     const handleCreateRoom = () => {
         ensureUsername();
-        const newRoomCode = String(Math.floor(100 + Math.random() * 900));
+        const newRoomCode = generateRoomCode();
         setActiveRoomCode(newRoomCode);
         const obj = {
             type: "join",
@@ -120,6 +127,7 @@ function App() {
         setMessages([]);
         setIsInRoom(false);
         setRoomCode("");
+        setActiveRoomCode("");
     };
 
     const handleSendMessage = (value: string) => {
