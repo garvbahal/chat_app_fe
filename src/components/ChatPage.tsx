@@ -4,7 +4,7 @@ import MessageInput from "./MessageInput";
 
 type ChatPageProps = {
     roomName: string;
-    onlineUsers: number;
+
     currentUser: string;
     messages: ChatMessage[];
     onSendMessage: (value: string) => void;
@@ -13,7 +13,7 @@ type ChatPageProps = {
 
 function ChatPage({
     roomName,
-    onlineUsers,
+
     currentUser,
     messages,
     onSendMessage,
@@ -26,9 +26,6 @@ function ChatPage({
                     <h2 className="font-display text-lg font-semibold text-slate-100 md:text-xl">
                         {roomName}
                     </h2>
-                    <p className="text-xs text-slate-400 md:text-sm">
-                        Online users: {onlineUsers}
-                    </p>
                 </div>
                 <button
                     type="button"
@@ -48,9 +45,9 @@ function ChatPage({
                     </div>
                 ) : (
                     <div className="space-y-3">
-                        {messages.map((message) => (
+                        {messages.map((message, index) => (
                             <MessageBubble
-                                key={message.id}
+                                key={index}
                                 message={message}
                                 currentUser={currentUser}
                             />

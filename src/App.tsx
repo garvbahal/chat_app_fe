@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import ChatPage from "./components/ChatPage";
 import type { ChatMessage } from "./components/MessageBubble";
 import JoinRoom from "./components/JoinRoom";
@@ -38,7 +38,6 @@ function App() {
                 setMessages((prevMesssages) => [
                     ...prevMesssages,
                     {
-                        id: 123, //see thiss
                         username: messageData.payload.username,
                         message: messageData.payload.message,
                         createdAt: messageData.payload.createdAt,
@@ -54,10 +53,6 @@ function App() {
         //cleanup on unmount
         return () => webSocket.close();
     }, []);
-
-    const onlineUsers = useMemo(() => {
-        return Math.max(2, Math.min(12, username.trim().length + 3));
-    }, [username]);
 
     const ensureUsername = () => {
         const normalized = username.trim();
@@ -173,7 +168,6 @@ function App() {
                 <div className="h-[calc(100vh-2rem)] w-full max-w-4xl md:h-[calc(100vh-3rem)]">
                     <ChatPage
                         roomName={`Room #${activeRoomCode || "123"}`}
-                        onlineUsers={onlineUsers}
                         currentUser={username.trim() || "Guest"}
                         messages={messages}
                         onSendMessage={handleSendMessage}
