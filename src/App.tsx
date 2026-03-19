@@ -15,8 +15,9 @@ function App() {
 
     async function fetchMessages(value: string) {
         try {
+          
             const response = await axios.get(
-                `http://localhost:3000/api/v1/messages/${value}`,
+                `${import.meta.env.VITE_BACKEND_URL}/messages/${value}`,
             );
 
             setMessages(response.data.messages);
@@ -25,7 +26,7 @@ function App() {
         }
     }
     useEffect(() => {
-        const webSocket = new WebSocket("ws://localhost:3000");
+        const webSocket = new WebSocket(`${import.meta.env.VITE_BACKEND_URL}`);
         setWs(webSocket);
 
         webSocket.onopen = () => {
